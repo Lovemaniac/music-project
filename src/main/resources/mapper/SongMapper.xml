@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.musicproject.mapper.SongMapper">
+
+    <resultMap id="SongResultMap" type="com.example.musicproject.entity.Song">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="artist" column="artist"/>
+        <result property="album" column="album"/>
+        <result property="duration" column="duration"/>
+        <result property="releaseDate" column="release_date"/>
+    </resultMap>
+
+    <!-- 插入单首歌曲 -->
+    <insert id="insertSong">
+        INSERT INTO song (id, name, artist, album, duration, release_date)
+        VALUES (#{id}, #{name}, #{artist}, #{album}, #{duration}, #{releaseDate})
+    </insert>
+
+    <!-- 根据 ID 查询单首歌曲 -->
+    <select id="getSongById" resultType="com.example.musicproject.entity.Song">
+        SELECT * FROM song WHERE id = #{id}
+    </select>
+
+    <!-- 查询歌单下的所有歌曲 -->
+    <select id="getSongsByPlaylistId" resultType="com.example.musicproject.entity.Song">
+     select
+         s.*
+         from somg s inner join playlist_song ps on s.id = ps.song_id where ps.playlist_id = #{playlistId}
+    </select>
+
+
+</mapper>

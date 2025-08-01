@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.musicproject.mapper.PlaylistMapper">
+
+    <!-- 插入歌单基本信息 -->
+    <insert id="insertPlaylist" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO playlist (name, cover)
+        values (#{name}, #{cover})
+    </insert>
+
+    <!-- 插入歌单-歌曲关联 -->
+    <insert id="insertPlaylistSongs">
+            iNSERT INTO playlist_song (playlist_id, song_id)
+            VALUES
+        <foreach collection="songIds" item="songId" separator=",">
+                (#{playlistId}, #{songId})
+        </foreach>
+    </insert>
+    
+
+    <!-- 查询歌单（带歌曲信息） -->
+    <resultMap id="PlaylistWithSongsMap" type="com.example.musicproject.entity.Playlist">
+    <id property="id" column="playlist_id"/>
+    <result property="name" column="name"/>
+    <result property="creator" column="creator"/>
+        <collection property="songs" ofType="java.lang.String">
+            <result column="song_id"/>
+        </collection>
+    </resultMap>
+
+    <select id="getPlaylistWithSongs" resultMap="PlaylistWithSongsMap">
+        select
+            p.id as playlist_id, p.name, p.creator, ps.song_id song_id
+            from playlist p left join playlist_song ps on p.id = ps.playlist_id
+            where p.id = #{id}
+    </select>
+
+
+    <!-- 删除歌单下所有歌曲（用于更新时清空原歌单歌曲） -->
+    <delete id="deletePlaylistSongs">
+        DELETE FROM playlist_song WHERE playlist_id = #{playlistId}
+    </delete>
+
+</mapper>
